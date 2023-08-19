@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		74232EFA2A87C55100CECCC2 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74232EF92A87C55100CECCC2 /* CalendarViewController.swift */; };
+		74232EFD2A87C61000CECCC2 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 74232EFC2A87C61000CECCC2 /* FSCalendar */; };
 		A804828427103A010095A493 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A804828327103A010095A493 /* DataManager.swift */; };
 		A804828627103A100095A493 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A804828527103A100095A493 /* StorageManager.swift */; };
 		A804828827103BFD0095A493 /* TaskList.swift in Sources */ = {isa = PBXBuildFile; fileRef = A804828727103BFD0095A493 /* TaskList.swift */; };
@@ -23,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		74232EF92A87C55100CECCC2 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		A804828327103A010095A493 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		A804828527103A100095A493 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		A804828727103BFD0095A493 /* TaskList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskList.swift; sourceTree = "<group>"; };
@@ -44,6 +47,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A8E4108F28B638810079DF08 /* RealmSwift in Frameworks */,
+				74232EFD2A87C61000CECCC2 /* FSCalendar in Frameworks */,
 				A8E4108D28B638810079DF08 /* Realm in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -63,6 +67,7 @@
 			children = (
 				A872A12020E9D87400ECE2BA /* TaskListViewController.swift */,
 				A872A12220E9D88E00ECE2BA /* TasksViewController.swift */,
+				74232EF92A87C55100CECCC2 /* CalendarViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -169,6 +174,7 @@
 			packageProductDependencies = (
 				A8E4108C28B638810079DF08 /* Realm */,
 				A8E4108E28B638810079DF08 /* RealmSwift */,
+				74232EFC2A87C61000CECCC2 /* FSCalendar */,
 			);
 			productName = RealmApp;
 			productReference = A872A10B20E9D82400ECE2BA /* RealmApp.app */;
@@ -201,6 +207,7 @@
 			mainGroup = A872A10220E9D82400ECE2BA;
 			packageReferences = (
 				A8E4108B28B638810079DF08 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				74232EFB2A87C61000CECCC2 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 			);
 			productRefGroup = A872A10C20E9D82400ECE2BA /* Products */;
 			projectDirPath = "";
@@ -235,6 +242,7 @@
 				A872A10F20E9D82400ECE2BA /* AppDelegate.swift in Sources */,
 				A804828627103A100095A493 /* StorageManager.swift in Sources */,
 				A872A12120E9D87400ECE2BA /* TaskListViewController.swift in Sources */,
+				74232EFA2A87C55100CECCC2 /* CalendarViewController.swift in Sources */,
 				A872A12320E9D88E00ECE2BA /* TasksViewController.swift in Sources */,
 				A8BCCE4128BA25F400D289DA /* Extension + UITableViewCell.swift in Sources */,
 			);
@@ -438,6 +446,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		74232EFB2A87C61000CECCC2 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/WenchaoD/FSCalendar";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		A8E4108B28B638810079DF08 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift";
@@ -449,6 +465,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		74232EFC2A87C61000CECCC2 /* FSCalendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 74232EFB2A87C61000CECCC2 /* XCRemoteSwiftPackageReference "FSCalendar" */;
+			productName = FSCalendar;
+		};
 		A8E4108C28B638810079DF08 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A8E4108B28B638810079DF08 /* XCRemoteSwiftPackageReference "realm-swift" */;
