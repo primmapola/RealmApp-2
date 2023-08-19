@@ -122,6 +122,9 @@ class WeekViewController: UITableViewController {
 extension WeekViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let detailVC = RedactInfoViewController()
+        if let tasksForDay = tasksGroupedByDay[sections[indexPath.section]] {
+            detailVC.task = tasksForDay[indexPath.row]
+        }
         navigationController?.pushViewController(detailVC, animated: true)
     }
 }
