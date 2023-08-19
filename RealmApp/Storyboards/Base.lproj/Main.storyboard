@@ -87,8 +87,7 @@
         <!--Item 1-->
         <scene sceneID="Ojv-mT-bD8">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Qyo-ub-jlM" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-                <viewController id="dto-je-Sq2" customClass="CalendarViewController" customModule="RealmApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="dto-je-Sq2" customClass="WeekViewController" customModule="RealmApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="9Cq-f1-zSV">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -97,6 +96,7 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Item 1" id="Kz3-5J-7yJ"/>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Qyo-ub-jlM" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-572" y="908"/>
         </scene>

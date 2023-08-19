@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		74232EFA2A87C55100CECCC2 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74232EF92A87C55100CECCC2 /* CalendarViewController.swift */; };
+		74232EFA2A87C55100CECCC2 /* WeekViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74232EF92A87C55100CECCC2 /* WeekViewController.swift */; };
 		74232EFD2A87C61000CECCC2 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 74232EFC2A87C61000CECCC2 /* FSCalendar */; };
 		A804828427103A010095A493 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A804828327103A010095A493 /* DataManager.swift */; };
 		A804828627103A100095A493 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A804828527103A100095A493 /* StorageManager.swift */; };
@@ -25,7 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		74232EF92A87C55100CECCC2 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
+		74232EF92A87C55100CECCC2 /* WeekViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekViewController.swift; sourceTree = "<group>"; };
 		A804828327103A010095A493 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		A804828527103A100095A493 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		A804828727103BFD0095A493 /* TaskList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskList.swift; sourceTree = "<group>"; };
@@ -67,7 +67,7 @@
 			children = (
 				A872A12020E9D87400ECE2BA /* TaskListViewController.swift */,
 				A872A12220E9D88E00ECE2BA /* TasksViewController.swift */,
-				74232EF92A87C55100CECCC2 /* CalendarViewController.swift */,
+				74232EF92A87C55100CECCC2 /* WeekViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -242,7 +242,7 @@
 				A872A10F20E9D82400ECE2BA /* AppDelegate.swift in Sources */,
 				A804828627103A100095A493 /* StorageManager.swift in Sources */,
 				A872A12120E9D87400ECE2BA /* TaskListViewController.swift in Sources */,
-				74232EFA2A87C55100CECCC2 /* CalendarViewController.swift in Sources */,
+				74232EFA2A87C55100CECCC2 /* WeekViewController.swift in Sources */,
 				A872A12320E9D88E00ECE2BA /* TasksViewController.swift in Sources */,
 				A8BCCE4128BA25F400D289DA /* Extension + UITableViewCell.swift in Sources */,
 			);
