@@ -28,6 +28,7 @@ class TasksViewController: UITableViewController {
         )
         navigationItem.rightBarButtonItems = [addButton, editButtonItem]
         currentTasks = taskList.tasks.filter("isComplete = false")
+        print(currentTasks)
         completedTasks = taskList.tasks.filter("isComplete = true")
     }
     
@@ -64,6 +65,7 @@ class TasksViewController: UITableViewController {
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
             StorageManager.shared.delete(task)
             tableView.deleteRows(at: [indexPath], with: .automatic)
+            NotificationCenter.default.post(name: Notification.Name("taskDeleted"), object: nil)
         }
         
         let editAction = UIContextualAction(style: .normal, title: "Edit") { [unowned self] _, _, isDone in
@@ -109,22 +111,25 @@ extension TasksViewController {
         
         let alert = UIAlertController.createAlert(withTitle: title, andMessage: "What do you want to do?")
         
-        alert.action(with: task) { newValue, note in
+        alert.action(with: task) { newValue, note, targetDate in
             if let task = task, let completion = completion {
-                StorageManager.shared.rename(task, to: newValue, withNote: note)
+                StorageManager.shared.rename(task, to: newValue, withNote: note, withDate: targetDate)
                 completion()
+                NotificationCenter.default.post(name: Notification.Name("taskSaved"), object: nil)
             } else {
-                self.save(task: newValue, withNote: note)
+                self.save(task: newValue, withNote: note, withDate: targetDate)
+                NotificationCenter.default.post(name: Notification.Name("taskSaved"), object: nil)
             }
         }
         
         present(alert, animated: true)
     }
     
-    private func save(task: String, withNote note: String) {
-        StorageManager.shared.save(task, withNote: note, to: taskList) { task in
+    private func save(task: String, withNote note: String, withDate targetDate: Date) {
+        StorageManager.shared.save(task, withNote: note, withDate: targetDate, to: taskList) { task in
             let rowIndex = IndexPath(row: currentTasks.index(of: task) ?? 0, section: 0)
             tableView.insertRows(at: [rowIndex], with: .automatic)
+            NotificationCenter.default.post(name: Notification.Name("taskSaved"), object: nil)
         }
     }
 }
