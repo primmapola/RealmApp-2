@@ -1,15 +1,11 @@
 import UIKit
 import RealmSwift
 
-class WeekViewController: UIViewController {
+class WeekViewController: UITableViewController {
     
     var tasks: Results<Task>?
-    
     var tasksGroupedByDay: [String: [Task]] = [:]
     
-    private let tableView = UITableView()
-    
-    // Названия секций
     private let sections = [
         "Понедельник",
         "Вторник",
@@ -42,13 +38,15 @@ class WeekViewController: UIViewController {
     }
 
     func groupTasksByWeekday() {
-        tasksGroupedByDay.removeAll()  // очищаем словарь перед группировкой
-        for task in tasks! {
-            let weekday = getWeekday(from: task.date)
-            if tasksGroupedByDay[weekday] == nil {
-                tasksGroupedByDay[weekday] = []
+        tasksGroupedByDay.removeAll()
+        if let unwrappedTasks = tasks {
+            for task in unwrappedTasks {
+                let weekday = getWeekday(from: task.date)
+                if tasksGroupedByDay[weekday] == nil {
+                    tasksGroupedByDay[weekday] = []
+                }
+                tasksGroupedByDay[weekday]?.append(task)
             }
-            tasksGroupedByDay[weekday]?.append(task)
         }
         for (key, value) in tasksGroupedByDay {
             print("\(key): \(value.count) tasks")
@@ -57,8 +55,7 @@ class WeekViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
-        setupTableView()
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
     
     private func getWeekday(from date: Date) -> String {
@@ -85,40 +82,21 @@ class WeekViewController: UIViewController {
         }
     }
     
-    private func setupTableView() {
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-        
-        tableView.delegate = self
-        tableView.dataSource = self
-        
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-    }
-}
-
-// MARK: - UITableViewDataSource
-
-extension WeekViewController: UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
+    // MARK: - UITableViewDataSource
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tasksGroupedByDay[sections[section]]?.count ?? 0
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return sections[section]
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         if let tasksForDay = tasksGroupedByDay[sections[indexPath.section]], indexPath.row < tasksForDay.count {
             let task = tasksForDay[indexPath.row]
@@ -130,19 +108,20 @@ extension WeekViewController: UITableViewDataSource {
         return cell
     }
     
-    func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
+    override func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
         return sectionsletters.firstIndex(of: title) ?? 0
     }
     
-    func sectionIndexTitles(for tableView: UITableView) -> [String]? {
+    override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         return sectionsletters
     }
 }
 
 // MARK: - UITableViewDelegate
 
-extension WeekViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+extension WeekViewController {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let detailVC = RedactInfoViewController()
+        navigationController?.pushViewController(detailVC, animated: true)
     }
 }
-

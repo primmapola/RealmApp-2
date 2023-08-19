@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		74232EFA2A87C55100CECCC2 /* WeekViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74232EF92A87C55100CECCC2 /* WeekViewController.swift */; };
 		74232EFD2A87C61000CECCC2 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 74232EFC2A87C61000CECCC2 /* FSCalendar */; };
+		74471BCF2A9124A20046EB23 /* RedactInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74471BCE2A9124A20046EB23 /* RedactInfoViewController.swift */; };
 		A804828427103A010095A493 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A804828327103A010095A493 /* DataManager.swift */; };
 		A804828627103A100095A493 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A804828527103A100095A493 /* StorageManager.swift */; };
 		A804828827103BFD0095A493 /* TaskList.swift in Sources */ = {isa = PBXBuildFile; fileRef = A804828727103BFD0095A493 /* TaskList.swift */; };
@@ -26,6 +27,7 @@
 
 /* Begin PBXFileReference section */
 		74232EF92A87C55100CECCC2 /* WeekViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekViewController.swift; sourceTree = "<group>"; };
+		74471BCE2A9124A20046EB23 /* RedactInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactInfoViewController.swift; sourceTree = "<group>"; };
 		A804828327103A010095A493 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		A804828527103A100095A493 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		A804828727103BFD0095A493 /* TaskList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskList.swift; sourceTree = "<group>"; };
@@ -68,6 +70,7 @@
 				A872A12020E9D87400ECE2BA /* TaskListViewController.swift */,
 				A872A12220E9D88E00ECE2BA /* TasksViewController.swift */,
 				74232EF92A87C55100CECCC2 /* WeekViewController.swift */,
+				74471BCE2A9124A20046EB23 /* RedactInfoViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -237,6 +240,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A804828827103BFD0095A493 /* TaskList.swift in Sources */,
+				74471BCF2A9124A20046EB23 /* RedactInfoViewController.swift in Sources */,
 				A8E78FE9241A76EE00E66973 /* Extension + UIAlertController.swift in Sources */,
 				A804828427103A010095A493 /* DataManager.swift in Sources */,
 				A872A10F20E9D82400ECE2BA /* AppDelegate.swift in Sources */,
