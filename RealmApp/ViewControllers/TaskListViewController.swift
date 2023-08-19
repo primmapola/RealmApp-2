@@ -20,6 +20,7 @@ class TaskListViewController: UITableViewController {
             target: self,
             action: #selector(addButtonPressed)
         )
+        title = "Клиенты"
         
         navigationItem.rightBarButtonItem = addButton
         navigationItem.leftBarButtonItem = editButtonItem
