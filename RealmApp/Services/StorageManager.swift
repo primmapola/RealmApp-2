@@ -50,9 +50,9 @@ class StorageManager {
     }
 
     // MARK: - Tasks
-    func save(_ task: String, withNote note: String, to taskList: TaskList, completion: (Task) -> Void) {
+    func save(_ task: String, withNote note: String, withDate date: Date, to taskList: TaskList, completion: (Task) -> Void) {
         write {
-            let task = Task(value: [task, note])
+            let task = Task(value: [task, note, date])
             taskList.tasks.append(task)
             completion(task)
         }
@@ -64,10 +64,11 @@ class StorageManager {
         }
     }
     
-    func rename(_ task: Task, to name: String, withNote note: String) {
+    func rename(_ task: Task, to name: String, withNote note: String, withDate date: Date) {
         write {
             task.name = name
             task.note = note
+            task.date = date
         }
     }
     
