@@ -1,29 +1,16 @@
-//
-//  TaskListsViewController.swift
-//  RealmApp
-//
-//  Created by Don Grigory on 02.07.2022.
-//  Copyright © 2022 Don Grigory. All rights reserved.
-//
-
 import UIKit
 import RealmSwift
 
 class TaskListViewController: UITableViewController {
 
+    // MARK: - Properties
     var taskLists: Results<TaskList>!
-    
+
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        let addButton = UIBarButtonItem(
-            barButtonSystemItem: .add,
-            target: self,
-            action: #selector(addButtonPressed)
-        )
-        title = "Клиенты"
         
-        navigationItem.rightBarButtonItem = addButton
-        navigationItem.leftBarButtonItem = editButtonItem
+        setupUI()
         createTempData()
         taskLists = StorageManager.shared.realm.objects(TaskList.self)
     }
@@ -45,8 +32,49 @@ class TaskListViewController: UITableViewController {
         return cell
     }
     
-    // MARK: - Table View Data Source
+    // MARK: - Table View Actions
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        configureSwipeActions(for: indexPath)
+    }
+    
+    // MARK: - Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        setupSegue(for: segue)
+    }
+
+    @IBAction func sortingList(_ sender: UISegmentedControl) {
+        taskLists = sender.selectedSegmentIndex == 0
+            ? taskLists.sorted(byKeyPath: "date")
+            : taskLists.sorted(byKeyPath: "name")
+        tableView.reloadData()
+    }
+    
+    @objc private func addButtonPressed() {
+        showAlert()
+    }
+    
+    private func createTempData() {
+        DataManager.shared.createTempData { [unowned self] in
+            tableView.reloadData()
+        }
+    }
+}
+
+// MARK: - UI Setup
+extension TaskListViewController {
+    private func setupUI() {
+        let addButton = UIBarButtonItem(
+            barButtonSystemItem: .add,
+            target: self,
+            action: #selector(addButtonPressed)
+        )
+        title = "Клиенты"
+        
+        navigationItem.rightBarButtonItem = addButton
+        navigationItem.leftBarButtonItem = editButtonItem
+    }
+    
+    private func configureSwipeActions(for indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let taskList = taskLists[indexPath.row]
         
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
@@ -73,34 +101,16 @@ class TaskListViewController: UITableViewController {
         return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
     }
     
-    // MARK: - Navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    private func setupSegue(for segue: UIStoryboardSegue) {
         guard let indexPath = tableView.indexPathForSelectedRow else { return }
         guard let tasksVC = segue.destination as? TasksViewController else { return }
         let taskList = taskLists[indexPath.row]
         tasksVC.taskList = taskList
     }
-
-    @IBAction func sortingList(_ sender: UISegmentedControl) {
-        taskLists = sender.selectedSegmentIndex == 0
-            ? taskLists.sorted(byKeyPath: "date")
-            : taskLists.sorted(byKeyPath: "name")
-        tableView.reloadData()
-    }
-    
-    @objc private func addButtonPressed() {
-        showAlert()
-    }
-    
-    private func createTempData() {
-        DataManager.shared.createTempData { [unowned self] in
-            tableView.reloadData()
-        }
-    }
 }
 
+// MARK: - Alerts & Saving
 extension TaskListViewController {
-    
     private func showAlert(with taskList: TaskList? = nil, completion: (() -> Void)? = nil) {
         let title = taskList != nil ? "Edit List" : "New List"
         let alert = UIAlertController.createAlert(withTitle: title, andMessage: "Please set title for new task list")

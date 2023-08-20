@@ -1,11 +1,3 @@
-//
-//  DataManager.swift
-//  RealmApp
-//
-//  Created by Don Grigory on 02.07.2022.
-//  Copyright © 2022 Don Grigory. All rights reserved.
-//
-
 import Foundation
 
 class DataManager {
