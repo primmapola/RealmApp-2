@@ -1,11 +1,3 @@
-//
-//  UIAlertController.swift
-//  RealmApp
-//
-//  Created by Don Grigory on 02.07.2022.
-//  Copyright © 2022 Don Grigory. All rights reserved.
-//
-
 import UIKit
 
 private var selectedDateKey: UInt8 = 0
@@ -60,8 +52,6 @@ extension UIAlertController {
     
     func action(with task: Task?, completion: @escaping (String, String, Date) -> Void) {
         
-        //        let datePicker = createDatePicker()
-        
         let title = task == nil ? "Save" : "Update"
         
         let saveAction = UIAlertAction(title: title, style: .default) { _ in
@@ -106,7 +96,7 @@ extension UIAlertController {
         
         addTextField { textField in
             textField.placeholder = "Target Date"
-            textField.text = task?.date.description // или отформатируйте дату, как вы хотите
+            textField.text = task?.date.description
             
             textField.addTarget(self, action: #selector(self.dateFieldTapped(textField:)), for: .editingDidBegin)
         }
@@ -124,7 +114,7 @@ extension UIAlertController {
         let datePickerAlert = UIAlertController(title: "Select Date", message: "\n\n\n\n\n\n\n\n", preferredStyle: .alert)
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
-        datePicker.translatesAutoresizingMaskIntoConstraints = false // включаем Auto Layout
+        datePicker.translatesAutoresizingMaskIntoConstraints = false 
         datePickerAlert.view.addSubview(datePicker)
         
         // Центрирование UIDatePicker
@@ -134,7 +124,6 @@ extension UIAlertController {
         ])
         
         let selectAction = UIAlertAction(title: "Select", style: .default) { _ in
-            // Здесь вы можете отформатировать дату и установить её в текстовом поле
             let formatter = DateFormatter()
             formatter.dateStyle = .medium
             self.selectedDate = datePicker.date

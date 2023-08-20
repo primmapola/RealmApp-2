@@ -1,62 +1,60 @@
-//
-//  RedactInfoViewController.swift
-//  RealmApp
-//
-//  Created by Grigory Don on 19.08.2023.
-//  Copyright © 2023 Alexey Efimov. All rights reserved.
-//
-
 import Foundation
 import RealmSwift
 import UIKit
 
 class RedactInfoViewController: UIViewController {
     
+    //MARK: - Properties
     var task: Task?
-    
     private var textView: UITextView!
     
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setupUI()
+        configureTextViewContent()
+        setTextViewConstraints()
+    }
+    
+    //MARK: - UI Setup
+    private func setupUI() {
+        view.backgroundColor = .white
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Сохранить", style: .done, target: self, action: #selector(saveChanges))
+    }
+    
+    private func configureTextViewContent() {
         textView = UITextView()
-        textView.translatesAutoresizingMaskIntoConstraints = false // Важно для использования AutoLayout
+        textView.translatesAutoresizingMaskIntoConstraints = false
         textView.font = UIFont.systemFont(ofSize: 16)
         textView.isEditable = true
-        view.backgroundColor = .white
+        textView.delegate = self
         view.addSubview(textView)
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Сохранить", style: .done, target: self, action: #selector(saveChanges))
-        
         if let task = task {
-            // Создание жирного шрифта для названия
-            let boldFont = UIFont.boldSystemFont(ofSize: 22)
-            let regularFont = UIFont.systemFont(ofSize: 16)
-            
-            // Создание атрибутированной строки для названия
-            let nameAttributes: [NSAttributedString.Key: Any] = [
-                .font: boldFont
-            ]
-            let nameAttributedString = NSMutableAttributedString(string: task.name, attributes: nameAttributes)
-            
-            // Создание атрибутированной строки для заметки
-            let noteAttributes: [NSAttributedString.Key: Any] = [
-                .font: regularFont
-            ]
-            let noteAttributedString = NSAttributedString(string: "\n" + task.note, attributes: noteAttributes)
-            
-            // Объединение двух атрибутированных строк
-            nameAttributedString.append(noteAttributedString)
-            
-            // Установка атрибутированной строки в textView
-            textView.attributedText = nameAttributedString
+            setupTextViewAttributedText(with: task)
         }
         
-        print(task)
-        
-        textView.delegate = self // Назначьте контроллер делегатом UITextView
         recognizeHashtags(in: textView)
+    }
+    
+    private func setupTextViewAttributedText(with task: Task) {
         
+        let boldFont = UIFont.boldSystemFont(ofSize: 22)
+        let regularFont = UIFont.systemFont(ofSize: 16)
+        
+        let nameAttributes: [NSAttributedString.Key: Any] = [.font: boldFont]
+        let nameAttributedString = NSMutableAttributedString(string: task.name, attributes: nameAttributes)
+        
+        let noteAttributes: [NSAttributedString.Key: Any] = [.font: regularFont]
+        let noteAttributedString = NSAttributedString(string: "\n" + task.note, attributes: noteAttributes)
+        
+        nameAttributedString.append(noteAttributedString)
+        
+        textView.attributedText = nameAttributedString
+    }
+    
+    private func setTextViewConstraints() {
         NSLayoutConstraint.activate([
             textView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             textView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -65,12 +63,12 @@ class RedactInfoViewController: UIViewController {
         ])
     }
     
+    // MARK: - Hashtag Recognition
     func recognizeHashtags(in textView: UITextView) {
         guard let attributedText = textView.attributedText else { return }
         let text = attributedText.string
-        let attributedString = NSMutableAttributedString(attributedString: attributedText) // Используйте существующую атрибутированную строку
+        let attributedString = NSMutableAttributedString(attributedString: attributedText)
 
-        // Регулярное выражение для поиска хештегов
         let hashtagPattern = "#\\w+"
         let regex = try? NSRegularExpression(pattern: hashtagPattern, options: [])
         
@@ -87,14 +85,14 @@ class RedactInfoViewController: UIViewController {
         textView.attributedText = attributedString
     }
     
+    // MARK: - Save Changes
     @objc private func saveChanges() {
-        // Разделим атрибутированный текст на две части: название и заметку
         guard let fullText = textView.text else { return }
         let components = fullText.components(separatedBy: "\n")
         guard !components.isEmpty else { return }
         
         let name = components[0]
-        let note = components.dropFirst().joined(separator: "\n") // Объединяем оставшиеся компоненты в одну строку, разделенную "\n"
+        let note = components.dropFirst().joined(separator: "\n")
         
         do {
             let realm = try Realm()
@@ -102,13 +100,14 @@ class RedactInfoViewController: UIViewController {
                 task?.name = name
                 task?.note = note
             }
-            navigationController?.popViewController(animated: true) // Возвращаемся к предыдущему контроллеру после сохранения
+            navigationController?.popViewController(animated: true)
         } catch {
             print("Error saving changes: \(error)")
         }
     }
 }
 
+// MARK: - UITextViewDelegate
 extension RedactInfoViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
         if URL.scheme == "hashtag" {
@@ -122,9 +121,6 @@ extension RedactInfoViewController: UITextViewDelegate {
     }
     
     func showNotes(withHashtag hashtag: String) {
-        // Для демонстрации просто выводим хештег в консоль
         print(hashtag)
     }
 }
-
-

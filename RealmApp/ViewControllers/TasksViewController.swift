@@ -1,20 +1,16 @@
-//
-//  TasksViewController.swift
-//  RealmApp
-//
-//  Created by Don Grigory on 02.07.2022.
-//  Copyright © 2022 Don Grigory. All rights reserved.
-//
-
 import UIKit
 import RealmSwift
 
 class TasksViewController: UITableViewController {
     
+    //MARK: - Properties
+    
     var taskList: TaskList!
     
     private var currentTasks: Results<Task>!
     private var completedTasks: Results<Task>!
+    
+    //MARK: - Lifesycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,11 +24,17 @@ class TasksViewController: UITableViewController {
         )
         navigationItem.rightBarButtonItems = [addButton, editButtonItem]
         currentTasks = taskList.tasks.filter("isComplete = false")
-        print(currentTasks)
         completedTasks = taskList.tasks.filter("isComplete = true")
     }
     
-    // MARK: - Table view data source
+    //MARK: - Button Actions
+    
+    @objc private func addButtonPressed() {
+        showAlert()
+    }
+    
+    //MARK: - Table view data source
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         2
     }
@@ -56,6 +58,7 @@ class TasksViewController: UITableViewController {
     }
     
     // MARK: - UITableViewDelegate
+    
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         let task = indexPath.section == 0
@@ -98,12 +101,9 @@ class TasksViewController: UITableViewController {
         
         return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
     }
-    
-    @objc private func addButtonPressed() {
-        showAlert()
-    }
-
 }
+
+//MARK: - Alert Handling
 
 extension TasksViewController {
     private func showAlert(with task: Task? = nil, completion: (() -> Void)? = nil) {
