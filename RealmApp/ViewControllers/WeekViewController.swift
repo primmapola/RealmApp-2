@@ -49,8 +49,16 @@ class WeekViewController: UITableViewController {
 
     func loadData() {
         do {
+            guard let (startDate, endDate) = getCurrentWeekDateRange() else {
+                print("Error getting current week range.")
+                return
+            }
+            
             let realm = try Realm()
-            tasks = realm.objects(Task.self).sorted(byKeyPath: "date", ascending: true)
+            
+            tasks = realm.objects(Task.self)
+                .filter("date >= %@ AND date <= %@", startDate, endDate)
+                .sorted(byKeyPath: "date", ascending: true)
             
             guard let unwrappedTasks = tasks else { return }
             
@@ -62,6 +70,22 @@ class WeekViewController: UITableViewController {
         } catch {
             print("Error initializing Realm: \(error)")
         }
+    }
+    
+    func getCurrentWeekDateRange() -> (startDate: Date, endDate: Date)? {
+        let calendar = Calendar.current
+
+        let today = Date()
+        guard let weekday = calendar.dateComponents([.weekday], from: today).weekday else { return nil }
+
+        // Воскресенье в календаре имеет индекс 1, понедельник - 2 и так далее.
+        // Если сегодня воскресенье, вернемся на 7 дней назад.
+        let daysToSubtract = weekday == 1 ? 7 : weekday - 2
+        
+        guard let monday = calendar.date(byAdding: .day, value: -daysToSubtract, to: today) else { return nil }
+        let endDate = calendar.date(byAdding: .day, value: 6, to: monday)!
+
+        return (monday, endDate)
     }
 
     func groupTasksByWeekday() {
