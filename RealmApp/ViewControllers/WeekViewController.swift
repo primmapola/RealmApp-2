@@ -142,7 +142,7 @@ class WeekViewController: UITableViewController {
     
     func updateTaskDate(_ task: Task, toWeekday weekday: String) {
         let calendar = Calendar.current
-        guard let (startDate, _) = getCurrentWeekDateRange() else {
+        guard let (_, _) = getCurrentWeekDateRange() else {
             print("Error getting current week range.")
             return
         }
@@ -235,16 +235,37 @@ class WeekViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        
         if let tasksForDay = tasksGroupedByDay[sections[indexPath.section]], indexPath.row < tasksForDay.count {
             let task = tasksForDay[indexPath.row]
+            print("Task importance: \(task.importance)")
+            
+            // Устанавливаем основное и второстепенное содержимое ячейки.
             var content = cell.defaultContentConfiguration()
             content.text = task.name
             content.secondaryText = task.note
             cell.contentConfiguration = content
+            
+            // Задаем значение по умолчанию для фона ячейки
+            cell.contentView.backgroundColor = UIColor.white
+            
+            // Изменяем фоновый цвет ячейки в соответствии с приоритетом задачи.
+            switch task.importance {
+            case .low:
+                cell.contentView.backgroundColor = UIColor.white
+            case .medium:
+                cell.contentView.backgroundColor = UIColor.blue
+            case .high:
+                cell.contentView.backgroundColor = UIColor.red
+            }
+        } else {
+            // Устанавливаем значение по умолчанию для ячеек, которые не соответствуют задачам
+            cell.contentView.backgroundColor = UIColor.white
         }
+        
         return cell
     }
-    
+
     override func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
         return sectionsletters.firstIndex(of: title) ?? 0
     }

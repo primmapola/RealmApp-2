@@ -112,13 +112,13 @@ extension TasksViewController {
         
         let alert = UIAlertController.createAlert(withTitle: title, andMessage: "What do you want to do?")
         
-        alert.action(with: task) { newValue, note, targetDate in
+        alert.action(with: task) { newValue, note, targetDate, importance in
             if let task = task, let completion = completion {
-                StorageManager.shared.rename(task, to: newValue, withNote: note, withDate: targetDate)
+                StorageManager.shared.rename(task, to: newValue, withNote: note, withDate: targetDate, withImportance: importance)
                 completion()
                 NotificationCenter.default.post(name: Notification.Name("taskSaved"), object: nil)
             } else {
-                self.save(task: newValue, withNote: note, withDate: targetDate)
+                self.save(task: newValue, withNote: note, withDate: targetDate, withImportance: importance)
                 NotificationCenter.default.post(name: Notification.Name("taskSaved"), object: nil)
             }
         }
@@ -126,8 +126,8 @@ extension TasksViewController {
         present(alert, animated: true)
     }
     
-    private func save(task: String, withNote note: String, withDate targetDate: Date) {
-        StorageManager.shared.save(task, withNote: note, withDate: targetDate, to: taskList) { task in
+    private func save(task: String, withNote note: String, withDate targetDate: Date, withImportance importnace: Importance) {
+        StorageManager.shared.save(task, withNote: note, withDate: targetDate, withImportance: importnace, to: taskList) { task in
             let rowIndex = IndexPath(row: currentTasks.index(of: task) ?? 0, section: 0)
             tableView.insertRows(at: [rowIndex], with: .automatic)
             NotificationCenter.default.post(name: Notification.Name("taskSaved"), object: nil)

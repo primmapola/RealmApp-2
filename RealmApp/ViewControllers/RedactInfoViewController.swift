@@ -122,6 +122,10 @@ extension RedactInfoViewController: UITextViewDelegate {
     }
     
     func showNotes(withHashtag hashtag: String) {
-        print(hashtag)
+        let foundedTasksVC = FoundedTasksViewController()
+        foundedTasksVC.hashtag = hashtag
+        let navController = UINavigationController(rootViewController: foundedTasksVC)
+        navController.modalPresentationStyle = .pageSheet
+        self.present(navController, animated: true, completion: nil)
     }
 }
