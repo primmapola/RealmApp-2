@@ -40,7 +40,7 @@ class RedactInfoViewController: UIViewController {
     
     private func setupTextViewAttributedText(with task: Task) {
         
-        let boldFont = UIFont.boldSystemFont(ofSize: 22)
+        let boldFont = UIFont.boldSystemFont(ofSize: 28)
         let regularFont = UIFont.systemFont(ofSize: 16)
         
         let nameAttributes: [NSAttributedString.Key: Any] = [.font: boldFont]
@@ -68,18 +68,17 @@ class RedactInfoViewController: UIViewController {
         guard let attributedText = textView.attributedText else { return }
         let text = attributedText.string
         let attributedString = NSMutableAttributedString(attributedString: attributedText)
-
-        let hashtagPattern = "#\\w+"
+        
+        let hashtagPattern = "#[\\w\\p{Cyrillic}]+"
         let regex = try? NSRegularExpression(pattern: hashtagPattern, options: [])
         
-        let matches = regex?.matches(in: text, options: [], range: NSRange(location: 0, length: text.count)) ?? []
+        let matches = regex?.matches(in: text, options: [], range: NSRange(location: 0, length: text.utf16.count)) ?? []
         
         for match in matches {
             let matchRange = match.range
-            if let swiftRange = Range(matchRange, in: text) {
-                let hashtagValue = text[swiftRange]
-                attributedString.addAttribute(.link, value: "hashtag://\(hashtagValue)", range: matchRange)
-            }
+            let hashtagValue = (text as NSString).substring(with: matchRange)
+            let encodedHashtagValue = hashtagValue.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
+            attributedString.addAttribute(.link, value: "hashtag://\(encodedHashtagValue)", range: matchRange)
         }
         
         textView.attributedText = attributedString
@@ -110,11 +109,13 @@ class RedactInfoViewController: UIViewController {
 // MARK: - UITextViewDelegate
 extension RedactInfoViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        print("Entered shouldInteractWith method")
         if URL.scheme == "hashtag" {
-            print("Hashtag scheme recognized")
-            let hashtag = URL.absoluteString.replacingOccurrences(of: "hashtag://#", with: "")
-            print("Processed hashtag: \(hashtag)")
-            showNotes(withHashtag: hashtag)
+            guard let encodedHashtag = URL.host else { return false }
+            if let decodedHashtag = encodedHashtag.removingPercentEncoding {
+                print("Processed hashtag: \(decodedHashtag)")
+                showNotes(withHashtag: decodedHashtag)
+            }
             return false
         }
         return true

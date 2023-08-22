@@ -65,6 +65,19 @@ class WeekViewController: UITableViewController {
         return dateFormatter.string(from: date).capitalized
     }
     
+    func getWeekDates() -> [Date] {
+        var calendar = Calendar.current
+        calendar.firstWeekday = 2 // Понедельник
+        calendar.timeZone = TimeZone(secondsFromGMT: 3 * 3600)! // GMT-3
+
+        guard let (startDate, _) = getCurrentWeekDateRange() else {
+            print("Error getting current week range.")
+            return []
+        }
+
+        return (0...6).compactMap { calendar.date(byAdding: .day, value: $0, to: startDate) }
+    }
+    
     // MARK: - Editing
     
     override func setEditing(_ editing: Bool, animated: Bool) {
@@ -82,6 +95,8 @@ class WeekViewController: UITableViewController {
             }
             
             let realm = try Realm()
+            
+            print("Начальная дата: \(startDate), Конечная дата: \(endDate)")
             
             tasks = realm.objects(Task.self)
                 .filter("date >= %@ AND date <= %@", startDate, endDate)
@@ -101,19 +116,28 @@ class WeekViewController: UITableViewController {
     
     func getCurrentWeekDateRange() -> (startDate: Date, endDate: Date)? {
         var calendar = Calendar.current
+        calendar.timeZone = TimeZone(secondsFromGMT: 3 * 3600)!
         calendar.firstWeekday = 2 // Понедельник
-        
+            
         let today = Date()
         guard let weekday = calendar.dateComponents([.weekday], from: today).weekday else { return nil }
-        
+            
         // Теперь понедельник имеет индекс 1, вторник - 2, и так далее.
         // Если сегодня понедельник, не меняем дату, в противном случае вернемся назад на необходимое количество дней.
-        let daysToSubtract = weekday == 1 ? 0 : weekday - 1
+        let daysToSubtract = weekday == 2 ? 0 : weekday - 2
+            
+        guard let roughMonday = calendar.date(byAdding: .day, value: -daysToSubtract, to: today) else { return nil }
         
-        guard let monday = calendar.date(byAdding: .day, value: -daysToSubtract, to: today) else { return nil }
-        let endDate = calendar.date(byAdding: .day, value: 6, to: monday)!
+        // Установка времени для понедельника на 00:00:00
+        guard let monday = calendar.date(bySettingHour: 0, minute: 0, second: 0, of: roughMonday) else { return nil }
         
-        return (monday, endDate)
+        // Получение воскресенья и установка времени на 23:59:59
+        guard let roughSunday = calendar.date(byAdding: .day, value: 6, to: monday),
+              let sunday = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: roughSunday) else {
+            return nil
+        }
+            
+        return (monday, sunday)
     }
     
     func updateTaskDate(_ task: Task, toWeekday weekday: String) {
@@ -122,51 +146,42 @@ class WeekViewController: UITableViewController {
             print("Error getting current week range.")
             return
         }
-        
-        var daysToAdd: Int = 0
-        switch weekday {
-        case "Понедельник":
-            daysToAdd = 0
-        case "Вторник":
-            daysToAdd = 1
-        case "Среда":
-            daysToAdd = 2
-        case "Четверг":
-            daysToAdd = 3
-        case "Пятница":
-            daysToAdd = 4
-        case "Суббота":
-            daysToAdd = 5
-        case "Воскресенье":
-            daysToAdd = 6
-        default:
-            break
-        }
-        
-        // Вычисляем дату на основе дня недели
-        let newBaseDate = calendar.date(byAdding: .day, value: daysToAdd, to: startDate)!
-        
-        // Сохраняем часы, минуты и секунды из исходной даты задачи
-        let components = calendar.dateComponents([.hour, .minute, .second], from: task.date)
-        guard let newDate = calendar.date(bySettingHour: components.hour ?? 0,
-                                          minute: components.minute ?? 0,
-                                          second: components.second ?? 0,
-                                          of: newBaseDate) else {
-            print("Error computing new date.")
+
+        let weekDates = getWeekDates()
+
+        // Находим индекс выбранного дня недели
+        guard let index = sections.firstIndex(of: weekday) else {
+            print("Error: Invalid section.")
             return
         }
         
-        // Обновление поля date в Realm
-        do {
-            let realm = try Realm()
-            try realm.write {
-                task.date = newDate
+        if index < weekDates.count {
+            let newDate = weekDates[index]
+            
+            // Сохраняем часы, минуты и секунды из исходной даты задачи
+            let components = calendar.dateComponents([.hour, .minute, .second], from: task.date)
+            guard let updatedDate = calendar.date(bySettingHour: components.hour ?? 0,
+                                                  minute: components.minute ?? 0,
+                                                  second: components.second ?? 0,
+                                                  of: newDate) else {
+                print("Error computing new date.")
+                return
             }
-        } catch {
-            print("Error updating task date: \(error)")
+
+            // Обновление поля date в Realm
+            do {
+                let realm = try Realm()
+                try realm.write {
+                    task.date = updatedDate
+                }
+                print("Updated task date to: \(updatedDate)")
+            } catch {
+                print("Error updating task date: \(error)")
+            }
+        } else {
+            // Тут обработка для нестандартных секций "Встречи" и "Звонки", если это необходимо
         }
     }
-    
     
     func groupTasksByWeekday() {
         originalTasksGroupedByDay.removeAll()
@@ -203,7 +218,19 @@ class WeekViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sections[section]
+        let weekdays = getWeekDates()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd_MM"
+        
+        // Проверка, чтобы избежать выхода за пределы массива.
+        if section < weekdays.count {
+            let dateTitle = formatter.string(from: weekdays[section])
+            let title = "\(sections[section]) - \(dateTitle)"
+            print(title)
+            return title
+        } else {
+            return sections[section] // Для "Встречи" и "Звонки"
+        }
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -250,6 +277,11 @@ class WeekViewController: UITableViewController {
         tasksGroupedByDay[destinationDay]?.append(movedTask)
         
         updateTaskDate(movedTask, toWeekday: destinationDay)
+        
+        // После обновления задачи в Realm, загрузите данные и сгруппируйте задачи снова.
+        loadData()
+        groupTasksByWeekday()
+        tableView.reloadData()
     }
 }
 
