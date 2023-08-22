@@ -50,59 +50,58 @@ extension UIAlertController {
         }
     }
     
-    func action(with task: Task?, completion: @escaping (String, String, Date) -> Void) {
+    func action(with task: Task?, completion: @escaping (String, String, Date, Importance) -> Void) {
         
-        let title = task == nil ? "Save" : "Update"
+        let title = task == nil ? "Сохранить" : "Обновить"
         
         let saveAction = UIAlertAction(title: title, style: .default) { _ in
             guard let newTask = self.textFields?.first?.text else { return }
             guard !newTask.isEmpty else { return }
             
-            let finalSelectedDate = self.selectedDate ?? Date.now
+            let finalSelectedDate = self.selectedDate ?? Date()
+            let importanceText = self.textFields?[3].text ?? "Средний"
+            let selectedImportance = Importance(rawValue: importanceText) ?? .medium
             
             if let note = self.textFields?[1].text, !note.isEmpty {
-                completion(newTask, note, finalSelectedDate )
-                NotificationCenter.default.post(name: Notification.Name("taskSaved"), object: nil)
-                print(finalSelectedDate)
+                completion(newTask, note, finalSelectedDate, selectedImportance)
             } else {
-                completion(newTask, "", finalSelectedDate )
+                completion(newTask, "", finalSelectedDate, selectedImportance)
             }
             NotificationCenter.default.post(name: Notification.Name("taskSaved"), object: nil)
-            print(finalSelectedDate)
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive)
+        let cancelAction = UIAlertAction(title: "Отменить", style: .destructive)
         
         let importancePicker = UIPickerView()
         importancePicker.delegate = self
         importancePicker.dataSource = self
         
         let importanceTextField = UITextField()
-        importanceTextField.placeholder = "Importance"
+        importanceTextField.placeholder = "Приоритет"
         importanceTextField.inputView = importancePicker
         
         addAction(saveAction)
         addAction(cancelAction)
         
         addTextField { textField in
-            textField.placeholder = "New task"
+            textField.placeholder = "Новая задача"
             textField.text = task?.name
         }
         
         addTextField { textField in
-            textField.placeholder = "Note"
+            textField.placeholder = "Заметка"
             textField.text = task?.note
         }
         
         addTextField { textField in
-            textField.placeholder = "Target Date"
+            textField.placeholder = "Целевая дата"
             textField.text = task?.date.description
             
             textField.addTarget(self, action: #selector(self.dateFieldTapped(textField:)), for: .editingDidBegin)
         }
         
         addTextField { textField in
-            textField.placeholder = "Importance"
+            textField.placeholder = "Приоритет"
             if let importance = task?.importance {
                 textField.text = importance.rawValue
             }
@@ -114,7 +113,7 @@ extension UIAlertController {
         let datePickerAlert = UIAlertController(title: "Select Date", message: "\n\n\n\n\n\n\n\n", preferredStyle: .alert)
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
-        datePicker.translatesAutoresizingMaskIntoConstraints = false 
+        datePicker.translatesAutoresizingMaskIntoConstraints = false
         datePickerAlert.view.addSubview(datePicker)
         
         // Центрирование UIDatePicker
